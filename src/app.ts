@@ -1,3 +1,11 @@
+/**
+ * init db
+ */
+import { connectDB, initDatabase } from "./utils";
+connectDB().then((sql) => {
+  initDatabase(sql);
+});
+
 import Koa from "koa";
 const app: Koa = new Koa();
 
@@ -8,8 +16,16 @@ import views from "koa-views";
 import bodyParser from "koa-bodyparser";
 import serve from "koa-static";
 
+import { logRoute } from "./routes/_middleware";
 import index from "./routes/index";
 import users from "./routes/user";
+import provider from "./routes/provider";
+import zone from "./routes/zone";
+import studyRoute from "./routes/studyRoute";
+import studySet from "./routes/studySet";
+import studyItem from "./routes/studyItem";
+import discuss from "./routes/discuss";
+import ranking from "./routes/ranking";
 
 // body parser
 app.use(
@@ -35,8 +51,16 @@ app.use(async (ctx: Koa.Context, next: Function) => {
 });
 
 // routes
+app.use(logRoute);
 app.use(index.routes()).use(index.allowedMethods());
 app.use(users.routes()).use(users.allowedMethods());
+app.use(provider.routes()).use(provider.allowedMethods());
+app.use(zone.routes()).use(zone.allowedMethods());
+app.use(studyRoute.routes()).use(studyRoute.allowedMethods());
+app.use(studySet.routes()).use(studySet.allowedMethods());
+app.use(studyItem.routes()).use(studyItem.allowedMethods());
+app.use(discuss.routes()).use(discuss.allowedMethods());
+app.use(ranking.routes()).use(ranking.allowedMethods());
 
 // error-handling
 app.on("error", (err: Error, ctx: Koa.Context) => {
