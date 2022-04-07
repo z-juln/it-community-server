@@ -2,6 +2,7 @@ import { SavedUserResult, Apply } from "../model";
 import { SQL } from "../utils";
 import { getUser } from "./user";
 import { ResultSetHeader } from "mysql2";
+import { applyStudyItem } from "./studyItem";
 
 export const getApplyProviderList =
   (sql: SQL) =>
@@ -54,7 +55,7 @@ export const passApplyProvider =
     }
 
     const result1 = (
-      await sql(`UPDATE apply SET status="pass" WHERE uid=${uid}`)
+      await sql(`UPDATE apply SET status="pass" WHERE target="provider" uid=${uid}`)
     )[0] as ResultSetHeader;
     if (result1.affectedRows === 0) return null;
 
@@ -99,6 +100,7 @@ export const postArticle =
         )
       )[0] as ResultSetHeader;
       if (result.affectedRows) {
+        await applyStudyItem(sql)(uid, newArticleId);
         return newArticleId;
       }
       return null;
@@ -110,7 +112,8 @@ export const postArticle =
             WHERE id=${articleId} AND uid=${uid}`
         )
       )[0] as ResultSetHeader;
-      if (result.affectedRows) {
+      if (result.affectedRows > 0) {
+        await applyStudyItem(sql)(uid, articleId);
         return articleId;
       }
       return null;

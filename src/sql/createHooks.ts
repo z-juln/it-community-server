@@ -185,6 +185,7 @@ export const apply_condition: Hooks = ((tableName: string) => ({
   create: `CREATE TABLE ${tableName} (
     id bigint PRIMARY KEY AUTO_INCREMENT,
     uid bigint NOT NULL,
+    target_id bigint,
     target varchar(100) DEFAULT "provider" COMMENT "provider | admin | zone | study-route | study-set | study-item",
     \`condition\` varchar(100) NOT NULL COMMENT "值为JSON格式数组",
     status varchar(100) DEFAULT "waitting" COMMENT "waitting | pass | reject",

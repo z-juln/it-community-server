@@ -1,3 +1,4 @@
+import { getApplyStudyItemList } from './../service/studyItem';
 import Router from "koa-router";
 import jwt from "jsonwebtoken";
 import { connectDB, secret } from "../utils";
@@ -6,14 +7,15 @@ import {
   getStudyItem,
   getStudyItemList,
   getStudySet,
-  getStudySetList,
-  getZone,
+  passApplyStudyItem,
 } from "../service";
-import type {
+import {
   RouterContext,
   PlainQuery,
   StudyItem,
   DBStudyItem,
+  Apply,
+  UserRole,
 } from "../model";
 
 const router = new Router();
@@ -55,11 +57,11 @@ router.get("/list", async (ctx: RouterContext<DBStudyItem[]>) => {
   } = ctx.query as PlainQuery;
 
   const sql = await connectDB();
-  const list = await getStudyItemList(sql)(
-    +setId,
-    +pageIndex * +pageNum,
-    +pageNum
-  );
+  const list = await getStudyItemList(sql)({
+    set_id: +setId,
+    startIndex: +pageIndex * +pageNum,
+    pageNum: +pageNum,
+  });
 
   ctx.body = {
     code: 1,
@@ -68,6 +70,65 @@ router.get("/list", async (ctx: RouterContext<DBStudyItem[]>) => {
   };
 });
 
-// TODO add
+// TODO add 在./provider.ts中的post-apply中
+
+router.post(
+  "/apply-list",
+  async (ctx: RouterContext<Apply[]>) => {
+    const {
+      uid,
+      status,
+      target_id,
+      title,
+    } = ctx.request.body as PlainQuery;
+
+    const sql = await connectDB();
+    const list = await getApplyStudyItemList(sql)({
+      uid: uid ? +uid : undefined,
+      status: status as any,
+      target_id: target_id ? +target_id : undefined,
+      title,
+    });
+
+    ctx.body = {
+      code: 1,
+      data: list,
+      message: "获取申请列表成功",
+    };
+  });
+
+
+router.post(
+  "/pass-apply",
+  validToken(UserRole.ADMIN),
+  async (ctx: RouterContext<StudyItem>) => {
+    const { id } = ctx.request.body as PlainQuery;
+
+    const failBody = {
+      code: 0,
+      data: null,
+      message: "学点审核通过操作失败",
+    };
+
+    if (id === null || id === undefined) {
+      ctx.body = failBody;
+      return;
+    }
+
+    const sql = await connectDB();
+    const res = await passApplyStudyItem(sql)(+id);
+
+    if (res === null) {
+      ctx.body = failBody;
+      return;
+    }
+
+    ctx.body = {
+      code: 1,
+      data: res,
+      message: "学点审核通过操作成功",
+    };
+  }
+);
 
 export default router;
