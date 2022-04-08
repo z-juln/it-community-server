@@ -89,14 +89,14 @@ export const postArticle =
     const checkedUser = await getUser(sql)({ uid });
     if (!checkedUser) return null;
 
-    content = content.replace(/"/g, '\\"');
+    console.log({content})
     if (articleId === -1) {
       const newArticleId = Date.now();
       const result = (
         await sql(
           `INSERT INTO study_item
           (id, uid, set_id, title, detail, content)
-          VALUES (${newArticleId}, ${uid}, ${setId}, "${title}", "${detail}", "${content}")`
+          VALUES (${newArticleId}, ${uid}, ${setId}, "${title}", "${detail}", '${content}')`
         )
       )[0] as ResultSetHeader;
       if (result.affectedRows) {

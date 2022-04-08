@@ -1,14 +1,18 @@
 import mysql from "mysql2/promise";
 import { dbJson, createHooks } from "../sql";
 
-export const connectDB = async () => {
-  const connection = await mysql.createConnection(dbJson);
+let connection: mysql.Connection;
 
-  try {
-    await connection.connect();
-    console.log("\n\t数据库连接成功");
-  } catch (error) {
-    console.log("\n\t数据库连接失败: ", error);
+export const connectDB = async () => {
+  if (!connection) {
+    connection = await mysql.createConnection(dbJson);
+
+    try {
+      await connection.connect();
+      console.log("\n\t数据库连接成功");
+    } catch (error) {
+      console.log("\n\t数据库连接失败: ", error);
+    }
   }
 
   return connection.execute.bind(connection);

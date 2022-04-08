@@ -125,7 +125,7 @@ export const study_item: Hooks = ((tableName: string) => ({
     set_id bigint NOT NULL,
     title varchar(100) NOT NULL,
     detail varchar(100) DEFAULT "",
-    content varchar(8000) DEFAULT "null" COMMENT "值为JSON格式",
+    content LONGTEXT COMMENT "值为JSON格式",
     praise_count bigint DEFAULT 0,
     tread_count bigint DEFAULT 0,
     FOREIGN KEY (uid) REFERENCES users(uid),
@@ -135,11 +135,11 @@ export const study_item: Hooks = ((tableName: string) => ({
   initRow: [
     `INSERT INTO ${tableName}
       (uid, set_id, title, detail, content)
-      VALUES (1, 2, "loop event", "detail...", "")
+      VALUES (1, 2, "浏览器event loop(事件循环)", "null")
     `,
     `INSERT INTO ${tableName}
       (uid, set_id, title, detail, content)
-      VALUES (1, 2, "test", "test...", "")
+      VALUES (1, 2, "test", "test...", "null")
     `,
     // [{"$$typeof":"HOST","content":"<div>写点什么吧...</div><div><br></div>"},{"key":"1647787448853","$$typeof":"Material","content":{"type":"single-choice","title":"单选题题目xxx","content":{"a":"aaa","b":"bbb","c":"ccc"},"answer":"a"}},{"$$typeof":"HOST","content":"<div><br></div><div>👌</div>"}]
   ],
