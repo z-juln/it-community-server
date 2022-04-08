@@ -130,7 +130,7 @@ router.post(
   }
 );
 
-// addStudyItem
+// add/edit studyItem
 router.post(
   "/post-article",
   validToken(UserRole.PROVIDER, UserRole.ADMIN),

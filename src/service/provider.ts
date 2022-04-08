@@ -90,7 +90,7 @@ export const postArticle =
     if (!checkedUser) return null;
 
     console.log({content})
-    if (articleId === -1) {
+    if (articleId == -1) {
       const newArticleId = Date.now();
       const result = (
         await sql(
@@ -108,12 +108,11 @@ export const postArticle =
       const result = (
         await sql(
           `UPDATE study_item
-            SET set_id=${setId}, title="${title}", detail="${detail}", content="${content}"
+            SET set_id=${setId}, title="${title}", detail="${detail}", content='${content}'
             WHERE id=${articleId} AND uid=${uid}`
         )
       )[0] as ResultSetHeader;
       if (result.affectedRows > 0) {
-        await applyStudyItem(sql)(uid, articleId);
         return articleId;
       }
       return null;
