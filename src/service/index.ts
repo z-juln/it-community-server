@@ -6,3 +6,4 @@ export * from "./studySet";
 export * from "./studyItem";
 export * from "./discuss";
 export * from "./ranking";
+export * from "./notification";

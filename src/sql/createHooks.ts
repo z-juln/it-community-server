@@ -198,3 +198,23 @@ export const apply_condition: Hooks = ((tableName: string) => ({
     // `,
   ],
 }))("apply");
+
+export const notification: Hooks = ((tableName: string) => ({
+  tableName,
+  create: `CREATE TABLE ${tableName} (
+    id bigint PRIMARY KEY AUTO_INCREMENT,
+    uid bigint NOT NULL,
+    type varchar(100) NOT NULL,
+    target_id bigint,
+    \`meta\` LONGTEXT,
+    \`time\` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
+    readed int DEFAULT 0,
+    FOREIGN KEY (uid) REFERENCES users(uid)
+  )`,
+  initRow: [
+    `INSERT INTO ${tableName}
+      (id, uid, type, target_id, \`meta\`)
+      VALUES (1, 1, "study_item_apply", 1, "{\\"target_name\\": \\"event loop\\"}")
+    `,
+  ],
+}))("notification");

@@ -15,3 +15,5 @@ export * from "./ranking";
 export type { default as Ranking } from "./ranking";
 export * from "./apply";
 export type { default as Apply } from "./apply";
+export * from "./notification";
+export type { default as Notification } from "./notification";

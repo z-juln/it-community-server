@@ -3,6 +3,7 @@ import { SQL } from "../utils";
 import { getUser } from "./user";
 import { ResultSetHeader } from "mysql2";
 import { applyStudyItem } from "./studyItem";
+import { addNotification } from "./notification";
 
 export const getApplyProviderList =
   (sql: SQL) =>
@@ -55,7 +56,7 @@ export const passApplyProvider =
     }
 
     const result1 = (
-      await sql(`UPDATE apply SET status="pass" WHERE target="provider" uid=${uid}`)
+      await sql(`UPDATE apply SET status="pass" WHERE target="provider" AND uid=${uid}`)
     )[0] as ResultSetHeader;
     if (result1.affectedRows === 0) return null;
 
@@ -64,6 +65,10 @@ export const passApplyProvider =
     )[0] as ResultSetHeader;
     if (result2.affectedRows > 0) {
       const userInfo = await getUser(sql)({ uid });
+      await addNotification(sql)({
+        uid,
+        type: 'provider_apply',
+      });
       return userInfo;
     }
     return null;
@@ -89,7 +94,7 @@ export const postArticle =
     const checkedUser = await getUser(sql)({ uid });
     if (!checkedUser) return null;
 
-    console.log({content})
+    // console.log({content})
     if (articleId == -1) {
       const newArticleId = Date.now();
       const result = (

@@ -1,7 +1,9 @@
+import { getStudyItem } from './studyItem';
 import { Discuss, DiscussWithChildren } from "./../model/discuss";
-import { connectDB, SQL } from "../utils";
+import { SQL } from "../utils";
 import { getUser } from "./user";
 import { ResultSetHeader } from "mysql2";
+import { addNotification } from "./notification";
 
 export const addDiscuss =
   (sql: SQL) =>
@@ -37,6 +39,47 @@ export const addDiscuss =
           )}" WHERE id=${topId}`
         );
       }
+
+      const userInfo = await getUser(sql)({ uid: user_id });
+      if (!userInfo) {
+        throw new Error(`userInfo不存在(uid: ${user_id})`);
+      }
+
+      // 评论通知
+      if (super_id !== -1) {
+        const studyItem = await getStudyItem(sql)(super_id);
+        if (!studyItem) {
+          throw new Error(`studyItem不存在(id: ${id})`);
+        }
+        await addNotification(sql)({
+          uid: studyItem.uid,
+          type: 'top-discuss',
+          target_id: studyItem.id,
+          meta: JSON.stringify({
+            title: studyItem.title,
+            target_name: userInfo.name,
+          }),
+        });
+      } else {
+        const studyItem = await getStudyItem(sql)(super_id);
+        if (!studyItem) {
+          throw new Error(`studyItem不存在(super_id: ${super_id})`);
+        }
+        const targetUserInfo = await getUser(sql)({ uid: studyItem.uid });
+        if (!targetUserInfo) {
+          throw new Error(`targetUserInfo不存在(uid: ${user_id})`);
+        }
+        await addNotification(sql)({
+          uid: targetUserInfo.uid,
+          type: 'reply-discuss',
+          target_id: super_id,
+          meta: JSON.stringify({
+            target_name: userInfo.name,
+            content,
+          }),
+        });
+      }
+
       const discussInfo = await getDiscussInfo(sql)({ id });
       return discussInfo;
     }

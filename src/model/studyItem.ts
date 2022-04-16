@@ -2,6 +2,7 @@ import type { DBStudySet } from ".";
 
 export interface DBStudyItem {
   id: number;
+  uid: number;
   set_id: number;
   title: string;
   content: string;

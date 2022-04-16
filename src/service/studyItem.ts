@@ -4,6 +4,7 @@ import { SQL } from "../utils";
 import type { DBStudyItem } from "../model";
 import { getUser } from './user';
 import { ResultSetHeader } from 'mysql2';
+import { addNotification } from './notification';
 
 export { postArticle as addStudyItem } from './provider';
 
@@ -20,12 +21,14 @@ export const getStudyItemList =
   (sql: SQL) =>
   async ({
     id,
+    uid,
     set_id = -1,
     startIndex = 0,
     pageNum = 20,
     title = "",
   }: {
     id?: number;
+    uid?: number;
     set_id?: number;
     startIndex?: number;
     pageNum?: number;
@@ -34,6 +37,9 @@ export const getStudyItemList =
     let sqlStr = `SELECT * FROM study_item WHERE 1=1`;
     if (id) {
       sqlStr += ` AND id=${id}`;
+    }
+    if (uid) {
+      sqlStr += ` AND uid=${uid}`;
     }
     if (set_id !== -1) {
       sqlStr += ` AND set_id=${set_id}`;
@@ -98,7 +104,6 @@ export const applyStudyItem =
     return null;
   }
 
-
 export const passApplyStudyItem =
   (sql: SQL) =>
   async (id: number): Promise<StudyItem | null> => {
@@ -110,8 +115,20 @@ export const passApplyStudyItem =
     const res = (
       await sql(`UPDATE apply SET status="pass" WHERE target="study-item" AND target_id=${id}`)
     )[0] as ResultSetHeader;
-    if (res.affectedRows === 0) return null;
-    
-    const studyItem = await getStudyItem(sql)(id);
-    return studyItem as any;
+    if (res.affectedRows > 0) {
+      const studyItem = await getStudyItem(sql)(id);
+      if (!studyItem) {
+        throw new Error(`studyItem不存在(id: ${id})`)
+      }
+      await addNotification(sql)({
+        uid: studyItem.uid,
+        type: 'study_item_apply',
+        target_id: id,
+        meta: JSON.stringify({
+          target_name: studyItem.title
+        }),
+      });
+      return studyItem as any;
+    }
+    return null;
   };

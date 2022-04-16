@@ -26,6 +26,7 @@ import studySet from "./routes/studySet";
 import studyItem from "./routes/studyItem";
 import discuss from "./routes/discuss";
 import ranking from "./routes/ranking";
+import notification from "./routes/notification";
 
 // body parser
 app.use(
@@ -61,6 +62,7 @@ app.use(studySet.routes()).use(studySet.allowedMethods());
 app.use(studyItem.routes()).use(studyItem.allowedMethods());
 app.use(discuss.routes()).use(discuss.allowedMethods());
 app.use(ranking.routes()).use(ranking.allowedMethods());
+app.use(notification.routes()).use(notification.allowedMethods());
 
 // error-handling
 app.on("error", (err: Error, ctx: Koa.Context) => {
