@@ -61,23 +61,23 @@ export const addDiscuss =
           }),
         });
       } else {
-        const studyItem = await getStudyItem(sql)(super_id);
-        if (!studyItem) {
-          throw new Error(`studyItem不存在(super_id: ${super_id})`);
-        }
-        const targetUserInfo = await getUser(sql)({ uid: studyItem.uid });
-        if (!targetUserInfo) {
-          throw new Error(`targetUserInfo不存在(uid: ${user_id})`);
-        }
-        await addNotification(sql)({
-          uid: targetUserInfo.uid,
-          type: 'reply-discuss',
-          target_id: super_id,
-          meta: JSON.stringify({
-            target_name: userInfo.name,
-            content,
-          }),
-        });
+        // const studyItem = await getStudyItem(sql)(super_id);
+        // if (!studyItem) {
+        //   throw new Error(`studyItem不存在(super_id: ${super_id})`);
+        // }
+        // const targetUserInfo = await getUser(sql)({ uid: studyItem.uid });
+        // if (!targetUserInfo) {
+        //   throw new Error(`targetUserInfo不存在(uid: ${user_id})`);
+        // }
+        // await addNotification(sql)({
+        //   uid: targetUserInfo.uid,
+        //   type: 'reply-discuss',
+        //   target_id: super_id,
+        //   meta: JSON.stringify({
+        //     target_name: userInfo.name,
+        //     content,
+        //   }),
+        // });
       }
 
       const discussInfo = await getDiscussInfo(sql)({ id });
