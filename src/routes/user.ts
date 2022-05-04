@@ -23,12 +23,12 @@ router.get("/list", async (ctx: RouterContext<SavedUserResult[]>) => {
   ctx.body = {
     code: 1,
     data: userList,
-    message: "获取用户信息成功",
+    message: "获取用户列表成功",
   };
 });
 
 router.get("/info", async (ctx: RouterContext<SavedUserResult>) => {
-  const { name } = ctx.query;
+  const { name, uid } = ctx.query as PlainQuery;
 
   const failBody = {
     code: 0,
@@ -36,13 +36,13 @@ router.get("/info", async (ctx: RouterContext<SavedUserResult>) => {
     message: "获取用户信息失败",
   };
 
-  if (typeof name !== "string") {
+  if (!name || !uid) {
     ctx.body = failBody;
     return;
   }
 
   const sql = await connectDB();
-  const info = await getUser(sql)({ name });
+  const info = await getUser(sql)({ name, uid: uid? +uid : undefined });
 
   ctx.body = info
     ? {

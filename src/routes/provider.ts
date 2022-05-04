@@ -71,7 +71,7 @@ router.post(
     const failBody = {
       code: 0,
       data: null,
-      message: "申请题主失败",
+      message: "申请贡献者失败",
     };
 
     const token = ctx.request.headers["authorization"];
@@ -92,7 +92,7 @@ router.post(
     ctx.body = {
       code: 1,
       data: res,
-      message: "申请题主成功",
+      message: "申请贡献者成功",
     };
   }
 );
@@ -106,7 +106,7 @@ router.post(
     const failBody = {
       code: 0,
       data: null,
-      message: "申请题主失败",
+      message: "通过贡献者申请失败",
     };
 
     if (uid === null || uid === undefined) {
@@ -125,7 +125,7 @@ router.post(
     ctx.body = {
       code: 1,
       data: res,
-      message: "申请题主成功",
+      message: "通过贡献者申请成功",
     };
   }
 );
